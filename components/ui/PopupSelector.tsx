@@ -1,16 +1,38 @@
 "use client";
-import { useState, useRef } from "react";
+// This component provides a dropdown selector for choosing a project board.
+// It displays a list of available boards and allows the user to select one.
+// It also includes functionality for creating a new board and switching between light/dark themes.
+import { useState, useRef, useEffect, Suspense } from "react";
 import { Switch } from "./switch";
 import { Sun, Moon, ArrowBigDown, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import IconBoard from "../../public/assets/icon-board.svg";
+import { useBoards } from "@/hooks/use-boards";
+import { useRouter, useSearchParams } from "next/navigation";
 
-const projects = ["Platfrom Launch", "Marketing Plan", "Road Map", "Grapes"];
-
-export default function PopupSelector() {
-  const [selectedItem, setSelectedItem] = useState<string | null>(projects[0]);
+function BoardSelectorContent() {
+  const { data: boards, isLoading } = useBoards();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const currentBoardId = searchParams.get("boardId");
+
+  // Sync URL with Boards: Default to first board if none selected
+  useEffect(() => {
+    if (boards && boards.length > 0 && !currentBoardId) {
+      router.replace(`/?boardId=${boards[0].id}`);
+    }
+  }, [boards, currentBoardId, router]);
+
+  const selectedBoard = boards?.find(
+    (b) => b.id.toString() === currentBoardId
+  );
+
+  const handleBoardClick = (boardId: number) => {
+    router.push(`/?boardId=${boardId}`);
+    setIsPopupVisible(false);
+  };
 
   const handleMouseEnter = () => {
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
@@ -42,34 +64,32 @@ export default function PopupSelector() {
       onMouseLeave={handleMouseLeave}
     >
       <div className="cursor-pointer font-bold flex items-center gap-1  text-lg  rounded transition-all">
-        <p >{selectedItem ? selectedItem : "Create a Board"}</p>
+        <p>{selectedBoard ? selectedBoard.name : "Select Board"}</p>
         <ChevronDown
-          className={`transition-transform duration-200 text-primary ${
-            isPopupVisible ? "rotate-180" : ""
-          }`}
+          className={`transition-transform duration-200 text-primary ${isPopupVisible ? "rotate-180" : ""
+            }`}
           size={16}
         />
       </div>
 
       <div
-        className={` absolute z-10 mt-2 w-max border border-foreground-200 rounded shadow-lg bg-foreground transition-opacity duration-200 text-muted ${
-          isPopupVisible ? "opacity-100 visible" : "opacity-0 invisible"
-        }`}
+        className={` absolute z-10 mt-2 w-max border border-foreground-200 rounded shadow-lg bg-foreground transition-opacity duration-200 text-muted ${isPopupVisible ? "opacity-100 visible" : "opacity-0 invisible"
+          }`}
       >
-        <p className="text-sm tracking-widest font-bold pt-3.5 pl-8 pb-2">{`ALL BOARDS (${projects.length})`}</p>
+        <p className="text-sm tracking-widest font-bold pt-3.5 pl-8 pb-2">{`ALL BOARDS (${boards?.length || 0
+          })`}</p>
         <div className="pr-8">
-          {projects.map((item) => (
+          {boards?.map((board) => (
             <div
-              key={item}
-              onClick={() => setSelectedItem(item)}
-              className={` py-3.5 pr-12 pl-8 cursor-pointer rounded-tr-full rounded-br-full text-gray font-semibold flex items-center gap-x-3 ${
-                selectedItem === item
+              key={board.id}
+              onClick={() => handleBoardClick(board.id)}
+              className={` py-3.5 pr-12 pl-8 cursor-pointer rounded-tr-full rounded-br-full text-gray font-semibold flex items-center gap-x-3 ${selectedBoard?.id === board.id
                   ? "bg-primary font-bold text-white"
                   : "hover:bg-accent hover:text-accent-foreground"
-              }`}
+                }`}
             >
               <IconBoard />
-              {item}
+              {board.name}
             </div>
           ))}
 
@@ -104,5 +124,13 @@ export default function PopupSelector() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function PopupSelector() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <BoardSelectorContent />
+    </Suspense>
   );
 }
