@@ -8,20 +8,21 @@ import { Sun, Moon, ArrowBigDown, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import IconBoard from "../../public/assets/icon-board.svg";
 import { useBoards } from "@/hooks/use-boards";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 
 function BoardSelectorContent() {
-  const { data: boards, isLoading } = useBoards();
+  const { data: boards } = useBoards();
   const [isPopupVisible, setIsPopupVisible] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const currentBoardId = searchParams.get("boardId");
+  const params = useParams();
+  const currentBoardId = params.boardId as string;
 
-  // Sync URL with Boards: Default to first board if none selected
+  // Sync URL with Boards: Default to first board if none selected & we are on home
   useEffect(() => {
     if (boards && boards.length > 0 && !currentBoardId) {
-      router.replace(`/?boardId=${boards[0].id}`);
+      // Optional: Auto redirect to first board
+      // router.replace(`/board/${boards[0].id}`);
     }
   }, [boards, currentBoardId, router]);
 
@@ -30,7 +31,7 @@ function BoardSelectorContent() {
   );
 
   const handleBoardClick = (boardId: number) => {
-    router.push(`/?boardId=${boardId}`);
+    router.push(`/board/${boardId}`);
     setIsPopupVisible(false);
   };
 
@@ -84,8 +85,8 @@ function BoardSelectorContent() {
               key={board.id}
               onClick={() => handleBoardClick(board.id)}
               className={` py-3.5 pr-12 pl-8 cursor-pointer rounded-tr-full rounded-br-full text-gray font-semibold flex items-center gap-x-3 ${selectedBoard?.id === board.id
-                  ? "bg-primary font-bold text-white"
-                  : "hover:bg-accent hover:text-accent-foreground"
+                ? "bg-primary font-bold text-white"
+                : "hover:bg-accent hover:text-accent-foreground"
                 }`}
             >
               <IconBoard />

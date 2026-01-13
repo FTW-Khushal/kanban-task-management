@@ -9,7 +9,7 @@ export const apiClient = {
         }
         return res.json()
     },
-    post: async <T>(endpoint: string, body: any): Promise<T> => {
+    post: async <T>(endpoint: string, body: unknown): Promise<T> => {
         const res = await fetch(`${BASE_URL}${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -22,7 +22,7 @@ export const apiClient = {
         }
         return res.json()
     },
-    patch: async <T>(endpoint: string, body: any): Promise<T> => {
+    patch: async <T>(endpoint: string, body: unknown): Promise<T> => {
         const res = await fetch(`${BASE_URL}${endpoint}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
