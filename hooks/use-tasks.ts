@@ -46,5 +46,31 @@ export function useCreateTask() {
     })
 }
 
+export function useUpdateTask() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: async ({ taskId, payload }: { taskId: string; payload: any }) => {
+            return apiClient.patch(`/tasks/${taskId}`, payload)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['board'] })
+        }
+    })
+}
+
+export function useToggleSubtask() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: async ({ subtaskId, isCompleted }: { subtaskId: string; isCompleted: boolean }) => {
+            return apiClient.patch(`/subtasks/${subtaskId}`, { is_completed: isCompleted })
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['board'] })
+        }
+    })
+}
+
 // Placeholder for future updates
 // export function useUpdateTask() { ... }

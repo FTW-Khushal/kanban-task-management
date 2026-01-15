@@ -43,10 +43,10 @@ export default function Sidebar() {
             <div className="hidden md:block fixed bottom-8 left-0 z-50">
                 <button
                     onClick={() => setIsSidebarVisible(true)}
-                    className="bg-primary hover:bg-primary/80 text-white p-3 rounded-r-full transition-colors flex items-center justify-center cursor-pointer"
+                    className="bg-primary hover:bg-primary/80 text-white p-5 rounded-r-full transition-colors flex items-center justify-center cursor-pointer"
                     aria-label="Show Sidebar"
                 >
-                    <IconShowSidebar className="w-4 h-4" />
+                    <IconShowSidebar />
                 </button>
             </div>
         );
@@ -73,7 +73,7 @@ export default function Sidebar() {
                             <div
                                 key={board.id}
                                 onClick={() => router.push(`/board/${board.id}`)}
-                                className={`py-3.5 pr-12 pl-8 cursor-pointer rounded-tr-full rounded-br-full text-gray font-semibold flex items-center gap-x-3 ${isActive
+                                className={`py-3.5 pr-12 pl-8 cursor-pointer rounded-tr-full rounded-br-full text-muted-foreground font-semibold flex items-center gap-x-3 ${isActive
                                     ? "bg-primary font-bold text-white"
                                     : "hover:bg-accent hover:text-accent-foreground"
                                     }`}
@@ -95,7 +95,7 @@ export default function Sidebar() {
             </div>
 
             {/* Bottom Actions: Theme & Hide Sidebar */}
-            <div className="pb-8 px-6 space-y-4">
+            <div className="pb-8 px-2 space-y-4">
                 {/* Theme Switcher */}
                 <div className="bg-background rounded-md p-4 flex items-center justify-center gap-x-4 mx-2">
                     <Image src="/assets/icon-light-theme.svg" alt="Light" width={19} height={19} />
@@ -108,6 +108,7 @@ export default function Sidebar() {
                     onClick={() => setIsSidebarVisible(false)}
                     className="flex items-center gap-2 px-2 text-muted-foreground hover:text-sidebar-foreground transition-colors w-full cursor-pointer"
                 >
+                    <span className="w-2"></span>
                     <IconHideSidebar />
                     <span className="font-bold text-sm">Hide Sidebar</span>
                 </button>

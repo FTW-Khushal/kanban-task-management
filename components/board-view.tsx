@@ -22,7 +22,7 @@ export default function BoardView({ boardId }: { boardId: string }) {
     return (
         <div className="flex gap-6 overflow-x-auto pb-4 h-full snap-x snap-mandatory px-4 md:px-6">
             {columns.map((column, index) => (
-                <Column key={column.id} column={column} index={index} />
+                <Column key={column.id} column={column} index={index} columns={columns} />
             ))}
 
             {/* "New Column" Placeholder Block */}

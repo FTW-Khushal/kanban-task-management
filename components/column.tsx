@@ -1,12 +1,15 @@
-
-import React from 'react'
-import { Column as ColumnType } from '@/types/api'
+import React, { useState } from 'react'
+import { Column as ColumnType, Task } from '@/types/api'
+import { TaskDetailsDialog } from './task-details-dialog'
 
 // Temporary random colors for columns until we have real data/design
 const DOT_COLORS = ['bg-blue-400', 'bg-purple-400', 'bg-green-400', 'bg-red-400']
 
-export function Column({ column, index }: { column: ColumnType; index: number }) {
+export function Column({ column, index, columns }: { column: ColumnType; index: number; columns: ColumnType[] }) {
     const colorClass = DOT_COLORS[index % DOT_COLORS.length]
+    const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
+
+    const selectedTask = selectedTaskId ? column.tasks?.find(t => t.id === selectedTaskId) || null : null;
 
     return (
         <div className="min-w-[280px] shrink-0">
@@ -20,9 +23,13 @@ export function Column({ column, index }: { column: ColumnType; index: number })
             {/* Task List Placeholder */}
             <div className="flex flex-col gap-5">
                 {column.tasks?.map((task) => (
-                    <div key={task.id} className="bg-white dark:bg-[#2B2C37] px-4 py-6 rounded-lg shadow-sm cursor-pointer hover:text-primary transition-colors group">
+                    <div
+                        key={task.id}
+                        onClick={() => setSelectedTaskId(task.id)}
+                        className="bg-white dark:bg-[#2B2C37] px-4 py-6 rounded-lg shadow-sm cursor-pointer hover:text-primary transition-colors group"
+                    >
                         <h3 className="font-bold text-[15px] mb-2 group-hover:text-primary transition-colors text-color-txtcolor">{task.title}</h3>
-                        <p className="text-xs font-bold text-gray-500">0 of {task.subtasks?.length || 0} subtasks</p>
+                        <p className="text-xs font-bold text-gray-500">{task.subtasks?.filter(s => s.is_completed).length || 0} of {task.subtasks?.length || 0} subtasks</p>
                     </div>
                 ))}
 
@@ -32,6 +39,13 @@ export function Column({ column, index }: { column: ColumnType; index: number })
                     </div>
                 )}
             </div>
+
+            <TaskDetailsDialog
+                open={!!selectedTask}
+                onOpenChange={(open) => !open && setSelectedTaskId(null)}
+                task={selectedTask}
+                columns={columns}
+            />
         </div>
     )
 }
