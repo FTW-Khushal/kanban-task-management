@@ -3,12 +3,21 @@ import { DialogLabel } from "@/components/ui/dialogs/dialogLabel"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Task, Column } from "@/types/api"
 import { useUpdateTask, useToggleSubtask } from "@/hooks/use-tasks"
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import Image from "next/image";
 
 interface TaskDetailsDialogProps {
     open: boolean
     onOpenChange: (open: boolean) => void
     task: Task | null
     columns: Column[]
+    onEditTask: (taskId: string) => void
 }
 
 export function TaskDetailsDialog({
@@ -16,6 +25,7 @@ export function TaskDetailsDialog({
     onOpenChange,
     task,
     columns,
+    onEditTask,
 }: TaskDetailsDialogProps) {
     const updateTaskMutation = useUpdateTask()
     const toggleSubtaskMutation = useToggleSubtask()
@@ -40,18 +50,41 @@ export function TaskDetailsDialog({
         })
     }
 
+    const handleEditClick = () => {
+        onEditTask(task.id)
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[480px] p-8 gap-6">
+            <DialogContent
+                className="sm:max-w-[480px] p-8 gap-6"
+                showCloseButton={false}
+                onOpenAutoFocus={(e) => e.preventDefault()}
+            >
                 <DialogHeader className="space-y-4">
-                    <div className="flex items-center justify-between">
-                        <DialogTitle className="text-lg font-bold">{task.title}</DialogTitle>
-                        {/* Kebab menu could go here */}
+                    <div className="flex items-center justify-between gap-4">
+                        <DialogTitle className="text-lg font-bold flex-1 min-w-0">{task.title}</DialogTitle>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger className="flex-shrink-0 p-2 -mr-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded transition-colors outline-none focus:outline-none" aria-label="Task options">
+                                <Image
+                                    className="cursor-pointer"
+                                    src="/assets/icon-vertical-ellipsis.svg"
+                                    alt="More icon"
+                                    width={5}
+                                    height={20}
+                                />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-[12rem] z-[100]">
+                                <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer">Edit Task</DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem variant="destructive" className="cursor-pointer">Delete Task</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </div>
                 </DialogHeader>
 
                 <div className="text-[13px] leading-6 text-gray-500">
-                    {task.description || "No description"}
+                    {task.description || "No description available"}
                 </div>
 
                 <div className="space-y-4">

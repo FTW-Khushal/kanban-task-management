@@ -50,3 +50,17 @@ export interface CreateTaskFormValues {
     status: string; // This maps to columnId in the UI
     position: number;
 }
+
+export interface UpdateSubtaskDto {
+    title?: string;
+    is_completed?: boolean;
+    id?: string;
+}
+
+export interface UpdateTaskDto {
+    title?: string;
+    description?: string;
+    column_id?: number;
+    position?: number;
+    subtasks?: UpdateSubtaskDto[];
+}

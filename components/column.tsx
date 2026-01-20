@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Column as ColumnType, Task } from '@/types/api'
 import { TaskDetailsDialog } from './task-details-dialog'
+import { EditTaskFormDialog } from './edit-task-form-dialog'
 
 // Temporary random colors for columns until we have real data/design
 const DOT_COLORS = ['bg-blue-400', 'bg-purple-400', 'bg-green-400', 'bg-red-400']
@@ -8,8 +9,15 @@ const DOT_COLORS = ['bg-blue-400', 'bg-purple-400', 'bg-green-400', 'bg-red-400'
 export function Column({ column, index, columns }: { column: ColumnType; index: number; columns: ColumnType[] }) {
     const colorClass = DOT_COLORS[index % DOT_COLORS.length]
     const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null)
+    const [editingTaskId, setEditingTaskId] = useState<string | null>(null)
 
     const selectedTask = selectedTaskId ? column.tasks?.find(t => t.id === selectedTaskId) || null : null;
+    const editingTask = editingTaskId ? column.tasks?.find(t => t.id === editingTaskId) || null : null;
+
+    const handleEditTask = (taskId: string) => {
+        setSelectedTaskId(null) // Close details dialog
+        setEditingTaskId(taskId) // Open edit dialog
+    }
 
     return (
         <div className="min-w-[280px] shrink-0">
@@ -20,7 +28,6 @@ export function Column({ column, index, columns }: { column: ColumnType; index: 
                 </h2>
             </div>
 
-            {/* Task List Placeholder */}
             <div className="flex flex-col gap-5">
                 {column.tasks?.map((task) => (
                     <div
@@ -45,7 +52,18 @@ export function Column({ column, index, columns }: { column: ColumnType; index: 
                 onOpenChange={(open) => !open && setSelectedTaskId(null)}
                 task={selectedTask}
                 columns={columns}
+                onEditTask={handleEditTask}
             />
+
+            {editingTask && (
+                <EditTaskFormDialog
+                    open={!!editingTask}
+                    onOpenChange={(open) => !open && setEditingTaskId(null)}
+                    columns={columns}
+                    task={editingTask}
+                />
+            )}
+
         </div>
     )
 }

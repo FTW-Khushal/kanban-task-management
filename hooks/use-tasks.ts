@@ -51,6 +51,7 @@ export function useUpdateTask() {
 
     return useMutation({
         mutationFn: async ({ taskId, payload }: { taskId: string; payload: any }) => {
+            console.log("Task updated successfully ===========> " + taskId + "\n " + JSON.stringify(payload))
             return apiClient.patch(`/tasks/${taskId}`, payload)
         },
         onSuccess: () => {
@@ -66,7 +67,45 @@ export function useToggleSubtask() {
         mutationFn: async ({ subtaskId, isCompleted }: { subtaskId: string; isCompleted: boolean }) => {
             return apiClient.patch(`/subtasks/${subtaskId}`, { is_completed: isCompleted })
         },
-        onSuccess: () => {
+        onMutate: async ({ subtaskId, isCompleted }) => {
+            // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+            await queryClient.cancelQueries({ queryKey: ['board'] })
+
+            // Snapshot the previous value
+            const previousBoardData = queryClient.getQueriesData({ queryKey: ['board'] })
+
+            // Optimistically update to the new value
+            queryClient.setQueriesData({ queryKey: ['board'] }, (oldData: any) => {
+                if (!oldData || !Array.isArray(oldData)) return oldData
+
+                // We need to find the subtask in the deeply nested structure: Column -> Task -> Subtask
+                return oldData.map((column: any) => ({
+                    ...column,
+                    tasks: column.tasks?.map((task: any) => ({
+                        ...task,
+                        subtasks: task.subtasks?.map((subtask: any) => {
+                            if (subtask.id === subtaskId) {
+                                return { ...subtask, is_completed: isCompleted }
+                            }
+                            return subtask
+                        })
+                    }))
+                }))
+            })
+
+            // Return a context object with the snapshot value
+            return { previousBoardData }
+        },
+        onError: (err, newTodo, context) => {
+            // If the mutation fails, use the context returned from onMutate to roll back
+            if (context?.previousBoardData) {
+                context.previousBoardData.forEach(([queryKey, data]) => {
+                    queryClient.setQueryData(queryKey, data)
+                })
+            }
+        },
+        onSettled: () => {
+            // Always refetch after error or success:
             queryClient.invalidateQueries({ queryKey: ['board'] })
         }
     })
