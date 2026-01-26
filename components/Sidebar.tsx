@@ -11,6 +11,7 @@ import IconHideSidebar from "@/public/assets/icon-hide-sidebar.svg";
 import IconShowSidebar from "@/public/assets/icon-show-sidebar.svg";
 import Logo from "@/public/assets/logo-dark.svg";
 import LogoLight from "@/public/assets/logo-light.svg";
+import { BoardFormDialog } from "./board-form-dialog";
 
 // Note: Ensure @svgr/webpack is configured in next.config.ts to import SVGs as components.
 // If standard Image imports are preferred for some, we can switch, but IconBoard uses it.
@@ -23,6 +24,7 @@ export default function Sidebar() {
 
     // Sidebar visibility state
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+    const [isBoardDialogOpen, setIsBoardDialogOpen] = useState(false);
 
     // Theme handling
     const onThemeChange = (checked: boolean) => {
@@ -34,8 +36,7 @@ export default function Sidebar() {
     };
 
     const onNewBoardClick = () => {
-        // Placeholder for new board logic
-        alert("Create New Board Clicked");
+        setIsBoardDialogOpen(true);
     };
 
     if (!isSidebarVisible) {
@@ -113,6 +114,11 @@ export default function Sidebar() {
                     <span className="font-bold text-sm">Hide Sidebar</span>
                 </button>
             </div>
+
+            <BoardFormDialog
+                open={isBoardDialogOpen}
+                onOpenChange={setIsBoardDialogOpen}
+            />
         </aside>
     );
 }

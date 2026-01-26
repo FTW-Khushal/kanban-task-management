@@ -51,7 +51,6 @@ export function useUpdateTask() {
 
     return useMutation({
         mutationFn: async ({ taskId, payload }: { taskId: string; payload: any }) => {
-            console.log("Task updated successfully ===========> " + taskId + "\n " + JSON.stringify(payload))
             return apiClient.patch(`/tasks/${taskId}`, payload)
         },
         onSuccess: () => {
@@ -111,5 +110,15 @@ export function useToggleSubtask() {
     })
 }
 
-// Placeholder for future updates
-// export function useUpdateTask() { ... }
+export function useDeleteTask() {
+    const queryClient = useQueryClient()
+
+    return useMutation({
+        mutationFn: async (taskId: string) => {
+            return apiClient.delete(`/tasks/${taskId}`)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['board'] })
+        },
+    })
+}

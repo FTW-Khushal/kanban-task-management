@@ -64,3 +64,13 @@ export interface UpdateTaskDto {
     position?: number;
     subtasks?: UpdateSubtaskDto[];
 }
+
+export interface CreateBoardDto {
+    name: string;
+    columns: { name: string }[];
+}
+
+export interface UpdateBoardDto {
+    name?: string;
+    columns?: { id?: number; name: string }[];
+}

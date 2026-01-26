@@ -2,7 +2,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { DialogLabel } from "@/components/ui/dialogs/dialogLabel"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Task, Column } from "@/types/api"
-import { useUpdateTask, useToggleSubtask } from "@/hooks/use-tasks"
+import { useUpdateTask, useToggleSubtask, useDeleteTask } from "@/hooks/use-tasks"
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -11,6 +11,8 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import Image from "next/image";
+import { useState } from "react"
+import { DeleteDialog } from "./delete-dialog"
 
 interface TaskDetailsDialogProps {
     open: boolean
@@ -27,8 +29,10 @@ export function TaskDetailsDialog({
     columns,
     onEditTask,
 }: TaskDetailsDialogProps) {
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
     const updateTaskMutation = useUpdateTask()
     const toggleSubtaskMutation = useToggleSubtask()
+    const deleteTaskMutation = useDeleteTask()
 
     if (!task) return null
 
@@ -54,6 +58,19 @@ export function TaskDetailsDialog({
         onEditTask(task.id)
     }
 
+    const handleDeleteClick = () => {
+        setIsDeleteDialogOpen(true)
+    }
+
+    const handleDeleteConfirm = () => {
+        deleteTaskMutation.mutate(task.id, {
+            onSuccess: () => {
+                setIsDeleteDialogOpen(false)
+                onOpenChange(false)
+            }
+        })
+    }
+
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent
@@ -77,7 +94,13 @@ export function TaskDetailsDialog({
                             <DropdownMenuContent align="end" className="w-[12rem] z-[100]">
                                 <DropdownMenuItem onClick={handleEditClick} className="cursor-pointer">Edit Task</DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem variant="destructive" className="cursor-pointer">Delete Task</DropdownMenuItem>
+                                <DropdownMenuItem
+                                    variant="destructive"
+                                    className="cursor-pointer"
+                                    onClick={handleDeleteClick}
+                                >
+                                    Delete Task
+                                </DropdownMenuItem>
                             </DropdownMenuContent>
                         </DropdownMenu>
                     </div>
@@ -128,6 +151,15 @@ export function TaskDetailsDialog({
                     </Select>
                 </div>
             </DialogContent>
+
+            <DeleteDialog
+                title="Delete this task?"
+                description={`Are you sure you want to delete the '${task.title}' task and its subtasks? This action cannot be reversed.`}
+                open={isDeleteDialogOpen}
+                onOpenChange={setIsDeleteDialogOpen}
+                onDelete={handleDeleteConfirm}
+                isDeleting={deleteTaskMutation.isPending}
+            />
         </Dialog>
     )
 }
