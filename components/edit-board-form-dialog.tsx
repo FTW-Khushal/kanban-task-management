@@ -63,7 +63,7 @@ export function EditBoardFormDialog({
                 },
                 onError: (error) => {
                     console.error("Failed to update board:", error);
-                    alert("Failed to update board: " + (error as any).message);
+                    alert("Failed to update board: " + (error as Error).message);
                 }
             }
         );

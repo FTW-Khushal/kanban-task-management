@@ -28,14 +28,12 @@ interface TaskFormDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
     columns: Column[];
-    boardId: number;
 }
 
 export function TaskFormDialog({
     open,
     onOpenChange,
     columns,
-    boardId,
 }: TaskFormDialogProps) {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");

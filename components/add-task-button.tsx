@@ -34,7 +34,6 @@ export function AddTaskButton({ boardId }: { boardId: string | null }) {
             <TaskFormDialog
                 open={open}
                 onOpenChange={setOpen}
-                boardId={parseInt(boardId)}
                 columns={columns || []}
             />
         </>

@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
-import { Column as ColumnType, Task } from '@/types/api'
+import { Column as ColumnType } from '@/types/api'
 import { TaskDetailsDialog } from './task-details-dialog'
 import { EditTaskFormDialog } from './edit-task-form-dialog'
+import { Draggable, Droppable } from '@hello-pangea/dnd'
+import { TaskCard } from './task-card'
 
 // Temporary random colors for columns until we have real data/design
 const DOT_COLORS = ['bg-blue-400', 'bg-purple-400', 'bg-green-400', 'bg-red-400']
@@ -20,50 +22,67 @@ export function Column({ column, index, columns }: { column: ColumnType; index: 
     }
 
     return (
-        <div className="min-w-[280px] shrink-0">
-            <div className="flex items-center gap-2 mb-6">
-                <div className={`w-4 h-4 rounded-full ${colorClass}`} />
-                <h2 className="text-xs font-bold tracking-[2.4px] text-gray-500 uppercase">
-                    {column.name} ({column.tasks?.length || 0})
-                </h2>
-            </div>
-
-            <div className="flex flex-col gap-5">
-                {column.tasks?.map((task) => (
+        <Draggable draggableId={String(column.id)} index={index}>
+            {(provided) => (
+                <div
+                    ref={provided.innerRef}
+                    {...provided.draggableProps}
+                    className="w-[280px] shrink-0"
+                >
                     <div
-                        key={task.id}
-                        onClick={() => setSelectedTaskId(task.id)}
-                        className="bg-white dark:bg-[#2B2C37] px-4 py-6 rounded-lg shadow-sm cursor-pointer hover:text-primary transition-colors group"
+                        {...provided.dragHandleProps}
+                        className="flex items-center gap-2 mb-6"
                     >
-                        <h3 className="font-bold text-[15px] mb-2 group-hover:text-primary transition-colors text-color-txtcolor">{task.title}</h3>
-                        <p className="text-xs font-bold text-gray-500">{task.subtasks?.filter(s => s.is_completed).length || 0} of {task.subtasks?.length || 0} subtasks</p>
+                        <div className={`w-4 h-4 rounded-full ${colorClass}`} />
+                        <h2 className="text-xs font-bold tracking-[2.4px] text-gray-500 uppercase">
+                            {column.name} ({column.tasks?.length || 0})
+                        </h2>
                     </div>
-                ))}
 
-                {(!column.tasks || column.tasks.length === 0) && (
-                    <div className="h-20 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-                        No Tasks
-                    </div>
-                )}
-            </div>
+                    <Droppable droppableId={String(column.id)} type="TASK">
+                        {(provided, snapshot) => (
+                            <div
+                                ref={provided.innerRef}
+                                {...provided.droppableProps}
+                                className={`flex flex-col gap-3 min-h-[500px] transition-colors ${snapshot.isDraggingOver ? 'bg-gray-100/50 rounded-lg dark:bg-gray-800/50' : ''}`}
+                            >
+                                {column.tasks?.map((task, index) => (
+                                    <TaskCard
+                                        key={task.id}
+                                        task={task}
+                                        index={index} // This index is critical for dnd logic
+                                        onClick={() => setSelectedTaskId(task.id)}
+                                    />
+                                ))}
+                                {(!column.tasks || column.tasks.length === 0) && !snapshot.isDraggingOver && (
+                                    <div className="h-20 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-lg flex items-center justify-center text-gray-400 text-sm">
+                                        No Tasks
+                                    </div>
+                                )}
+                                {provided.placeholder}
+                            </div>
+                        )}
+                    </Droppable>
 
-            <TaskDetailsDialog
-                open={!!selectedTask}
-                onOpenChange={(open) => !open && setSelectedTaskId(null)}
-                task={selectedTask}
-                columns={columns}
-                onEditTask={handleEditTask}
-            />
+                    <TaskDetailsDialog
+                        open={!!selectedTask}
+                        onOpenChange={(open) => !open && setSelectedTaskId(null)}
+                        task={selectedTask}
+                        columns={columns}
+                        onEditTask={handleEditTask}
+                    />
 
-            {editingTask && (
-                <EditTaskFormDialog
-                    open={!!editingTask}
-                    onOpenChange={(open) => !open && setEditingTaskId(null)}
-                    columns={columns}
-                    task={editingTask}
-                />
+                    {editingTask && (
+                        <EditTaskFormDialog
+                            open={!!editingTask}
+                            onOpenChange={(open) => !open && setEditingTaskId(null)}
+                            columns={columns}
+                            task={editingTask}
+                        />
+                    )}
+
+                </div>
             )}
-
-        </div>
+        </Draggable>
     )
 }

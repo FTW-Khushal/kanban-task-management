@@ -56,7 +56,7 @@ export function BoardFormDialog({
                 },
                 onError: (error) => {
                     console.error("Failed to create board:", error);
-                    alert("Failed to create board: " + (error as any).message);
+                    alert("Failed to create board: " + (error as Error).message);
                 }
             }
         );

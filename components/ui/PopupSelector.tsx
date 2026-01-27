@@ -4,7 +4,7 @@
 // It also includes functionality for creating a new board and switching between light/dark themes.
 import { useState, useRef, useEffect, Suspense } from "react";
 import { Switch } from "./switch";
-import { Sun, Moon, ArrowBigDown, ChevronDown } from "lucide-react";
+import { ChevronDown } from "lucide-react";
 import Image from "next/image";
 import IconBoard from "../../public/assets/icon-board.svg";
 import { useBoards } from "@/hooks/use-boards";

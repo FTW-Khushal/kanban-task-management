@@ -2,15 +2,12 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { useBoards } from "@/hooks/use-boards";
 import { Switch } from "@/components/ui/switch";
 import IconBoard from "@/public/assets/icon-board.svg";
 import IconHideSidebar from "@/public/assets/icon-hide-sidebar.svg";
 import IconShowSidebar from "@/public/assets/icon-show-sidebar.svg";
-import Logo from "@/public/assets/logo-dark.svg";
-import LogoLight from "@/public/assets/logo-light.svg";
 import { BoardFormDialog } from "./board-form-dialog";
 
 // Note: Ensure @svgr/webpack is configured in next.config.ts to import SVGs as components.

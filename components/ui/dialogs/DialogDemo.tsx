@@ -5,7 +5,6 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
@@ -21,11 +20,9 @@ import {
   SelectContent,
   SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "../select";
-import { stat } from "fs";
 
 export function DialogDemo({ title }: { title: string }) {
   const [subtasks, setSubtasks] = useState<string[]>([
@@ -34,8 +31,6 @@ export function DialogDemo({ title }: { title: string }) {
   ]);
 
   const statuses = ["Pending", "In Progress", "Completed", "On Hold"];
-
-  const [status, setStatus] = useState("");
 
   return (
     <Dialog >
