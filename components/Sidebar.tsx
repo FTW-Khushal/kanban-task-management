@@ -9,6 +9,10 @@ import IconBoard from "@/public/assets/icon-board.svg";
 import IconHideSidebar from "@/public/assets/icon-hide-sidebar.svg";
 import IconShowSidebar from "@/public/assets/icon-show-sidebar.svg";
 import { BoardFormDialog } from "./board-form-dialog";
+import { ResetDbDialog } from "./reset-db-dialog";
+import { useResetDb } from "@/hooks/use-reset-db";
+import { Button } from "./ui/button";
+import { TriangleAlert } from "lucide-react";
 
 // Note: Ensure @svgr/webpack is configured in next.config.ts to import SVGs as components.
 // If standard Image imports are preferred for some, we can switch, but IconBoard uses it.
@@ -22,6 +26,9 @@ export default function Sidebar() {
     // Sidebar visibility state
     const [isSidebarVisible, setIsSidebarVisible] = useState(true);
     const [isBoardDialogOpen, setIsBoardDialogOpen] = useState(false);
+    const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
+
+    const { mutate: resetDb, isPending: isResetting } = useResetDb();
 
     // Theme handling
     const onThemeChange = (checked: boolean) => {
@@ -92,8 +99,11 @@ export default function Sidebar() {
                 </div>
             </div>
 
-            {/* Bottom Actions: Theme & Hide Sidebar */}
+            {/* Bottom Actions: Reset, Theme & Hide Sidebar */}
             <div className="pb-8 px-2 space-y-4">
+                {/* Reset Database Button */}
+
+
                 {/* Theme Switcher */}
                 <div className="bg-background rounded-md p-4 flex items-center justify-center gap-x-4 mx-2">
                     <Image src="/assets/icon-light-theme.svg" alt="Light" width={19} height={19} />
@@ -110,11 +120,27 @@ export default function Sidebar() {
                     <IconHideSidebar />
                     <span className="font-bold text-sm">Hide Sidebar</span>
                 </button>
+
+                <Button
+                    onClick={() => setIsResetDialogOpen(true)}
+                    variant="link"
+                    className="w-full text-red-500"
+                >
+                    <TriangleAlert className="h-4 w-4" />
+                    <span>Reset Data</span>
+                </Button>
             </div>
 
             <BoardFormDialog
                 open={isBoardDialogOpen}
                 onOpenChange={setIsBoardDialogOpen}
+            />
+
+            <ResetDbDialog
+                open={isResetDialogOpen}
+                onOpenChange={setIsResetDialogOpen}
+                onReset={() => resetDb(undefined, { onSuccess: () => setIsResetDialogOpen(false) })}
+                isResetting={isResetting}
             />
         </aside>
     );
