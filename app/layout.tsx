@@ -9,6 +9,7 @@ import { getBoards } from "@/lib/queries";
 import { dehydrate, HydrationBoundary } from "@tanstack/react-query";
 import { getQueryClient } from "@/lib/get-query-client";
 import { DialogDemo } from "@/components/ui/dialogs/DialogDemo";
+import ChatWidget from "@/components/chat-widget";
 
 const plusJakartaSans = Plus_Jakarta_Sans({
   variable: "--font-plus-jakarta-sans",
@@ -40,6 +41,7 @@ export default async function RootLayout({
               <div className="hidden">
                 <DialogDemo title="" />
               </div>
+              <ChatWidget />
             </div>
           </HydrationBoundary>
         </Providers>
