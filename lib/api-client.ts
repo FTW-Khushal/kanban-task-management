@@ -1,5 +1,5 @@
 
-const BASE_URL = 'http://localhost:3001'
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'https://api.kanbanapp.net'
 
 export const apiClient = {
     get: async <T>(endpoint: string): Promise<T> => {

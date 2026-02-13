@@ -98,8 +98,9 @@ export function useChat({ boardId, columns }: UseChatProps) {
         setMessages((prev) => [...prev, userMsg]);
         setIsLoading(true);
 
+        const BASE_URL = process.env.NEXT_PUBLIC_API_URL
         try {
-            const response = await fetch("http://localhost:3001/api/kanban/generate", {
+            const response = await fetch(`${BASE_URL}/api/kanban/generate`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ user_request: text }),
