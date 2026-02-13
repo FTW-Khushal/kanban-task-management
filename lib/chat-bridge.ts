@@ -1,7 +1,7 @@
 
 import { apiClient } from "@/lib/api-client";
 import { QueryClient } from "@tanstack/react-query";
-import { Column, Task } from "@/types/api";
+import { Board, Column, Subtask, Task, UpdateTaskDto } from "@/types/api";
 
 type BridgeContext = {
     boardId: string | null;
@@ -11,22 +11,22 @@ type BridgeContext = {
 
 export const executeBridgeFunction = async (
     functionName: string,
-    args: any,
+    args: Record<string, string>,
     queryClient: QueryClient,
     context: BridgeContext
 ): Promise<{ success: boolean; message: string }> => {
-    console.log(`Executing Bridge Function: ${functionName}`, args);
+
 
     try {
         switch (functionName) {
             case "bridge_get_boards":
-                const boards: any[] = await apiClient.get("/boards");
+                const boards = await apiClient.get<Board[]>("/boards");
                 const boardNames = boards.map((b) => b.name).join(", ");
                 return { success: true, message: `Available boards: ${boardNames}` };
 
             case "bridge_get_board_details":
                 if (!args.board_name) throw new Error("board_name is required");
-                const allBoards: any[] = await apiClient.get("/boards");
+                const allBoards = await apiClient.get<Board[]>("/boards");
                 const targetBoard = allBoards.find(
                     (b) => b.name.toLowerCase() === args.board_name.toLowerCase()
                 );
@@ -68,18 +68,18 @@ export const executeBridgeFunction = async (
                 // If we are on the board, context.boardId matches.
                 // But user might say "Rename board X" while on board Y.
                 // So let's fetch boards to find ID.
-                const boardsToUpdate: any[] = await apiClient.get("/boards");
+                const boardsToUpdate = await apiClient.get<Board[]>("/boards");
                 const boardStart = boardsToUpdate.find(b => b.name.toLowerCase() === args.current_name.toLowerCase());
 
                 if (!boardStart) return { success: false, message: `Board '${args.current_name}' not found.` };
 
-                const updatePayload: any = {};
+                const updatePayload: Partial<Board> = {};
                 if (args.new_name) updatePayload.name = args.new_name;
                 // Complex column updates might be tricky via bridge.
 
                 await apiClient.patch(`/boards/${boardStart.id}`, updatePayload);
                 await queryClient.invalidateQueries({ queryKey: ["boards"] });
-                if (context.boardId === boardStart.id) {
+                if (context.boardId === String(boardStart.id)) {
                     await queryClient.invalidateQueries({ queryKey: ["board", context.boardId] });
                 }
 
@@ -87,7 +87,7 @@ export const executeBridgeFunction = async (
 
             case "bridge_delete_board":
                 if (!args.board_name) throw new Error("board_name is required");
-                const boardsToDelete: any[] = await apiClient.get("/boards");
+                const boardsToDelete = await apiClient.get<Board[]>("/boards");
                 const boardToDelete = boardsToDelete.find(b => b.name.toLowerCase() === args.board_name.toLowerCase());
 
                 if (!boardToDelete) return { success: false, message: `Board '${args.board_name}' not found.` };
@@ -96,7 +96,7 @@ export const executeBridgeFunction = async (
                 await queryClient.invalidateQueries({ queryKey: ["boards"] });
 
                 // If we deleted current board, navigate to home/first board?
-                if (context.boardId === boardToDelete.id) {
+                if (context.boardId === String(boardToDelete.id)) {
                     context.navigate("/");
                 }
 
@@ -129,7 +129,7 @@ export const executeBridgeFunction = async (
                 if (!args.current_task_title) throw new Error("current_task_title is required");
 
                 // Find task in current board context
-                let foundTask: any = null;
+                let foundTask: Task | null = null;
 
                 for (const col of context.columns) {
                     const task = col.tasks?.find(t => t.title.toLowerCase() === args.current_task_title.toLowerCase());
@@ -141,7 +141,7 @@ export const executeBridgeFunction = async (
 
                 if (!foundTask) return { success: false, message: `Task '${args.current_task_title}' not found on this board.` };
 
-                const taskUpdatePayload: any = {};
+                const taskUpdatePayload: Partial<UpdateTaskDto> = {};
                 if (args.new_title) taskUpdatePayload.title = args.new_title;
                 if (args.new_description) taskUpdatePayload.description = args.new_description;
 
@@ -161,7 +161,7 @@ export const executeBridgeFunction = async (
             case "bridge_delete_task":
                 if (!args.task_title) throw new Error("task_title is required");
 
-                let taskToDelete: any = null;
+                let taskToDelete: Task | null = null;
                 for (const col of context.columns) {
                     const task = col.tasks?.find(t => t.title.toLowerCase() === args.task_title.toLowerCase());
                     if (task) {
@@ -179,7 +179,7 @@ export const executeBridgeFunction = async (
             case "bridge_toggle_subtask":
                 if (!args.parent_task_title || !args.subtask_title) throw new Error("parent_task_title and subtask_title are required");
 
-                let parentTask: any = null;
+                let parentTask: Task | null = null;
                 for (const col of context.columns) {
                     const task = col.tasks?.find(t => t.title.toLowerCase() === args.parent_task_title.toLowerCase());
                     if (task) {
@@ -191,7 +191,7 @@ export const executeBridgeFunction = async (
                 if (!parentTask) return { success: false, message: `Task '${args.parent_task_title}' not found.` };
 
                 // Assuming subtasks are loaded with tasks
-                const subtask = parentTask.subtasks?.find((s: any) => s.title.toLowerCase() === args.subtask_title.toLowerCase());
+                const subtask = parentTask.subtasks?.find((s: Subtask) => s.title.toLowerCase() === args.subtask_title.toLowerCase());
                 if (!subtask) return { success: false, message: `Subtask '${args.subtask_title}' not found.` };
 
                 const isCompleted = args.is_completed === "true";
@@ -204,8 +204,9 @@ export const executeBridgeFunction = async (
             default:
                 return { success: false, message: `Function '${functionName}' not implemented.` };
         }
-    } catch (error: any) {
+    } catch (error: unknown) {
+        const message = error instanceof Error ? error.message : String(error);
         console.error(`Bridge Error [${functionName}]:`, error);
-        return { success: false, message: `Error: ${error.message}` };
+        return { success: false, message: `Error: ${message}` };
     }
 };

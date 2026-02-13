@@ -72,10 +72,10 @@ export default function ChatWidget() {
                                     <p className="mb-2">👋 Hi there!</p>
                                     <p className="text-sm">I can help you manage your board. Try saying:</p>
                                     <ul className="text-sm mt-2 space-y-1 bg-white dark:bg-[#2B2C37] p-3 rounded-lg inline-block text-left">
-                                        <li>"Create a task 'Buy Milk' in Todo"</li>
-                                        <li>"Add waiting column to this board"</li>
-                                        <li>"Switch to Marketing board"</li>
-                                        <li>"Delete task 'Old Task'"</li>
+                                        <li>&quot;Create a task &apos;Buy Milk&apos; in Todo&quot;</li>
+                                        <li>&quot;Add waiting column to this board&quot;</li>
+                                        <li>&quot;Switch to Marketing board&quot;</li>
+                                        <li>&quot;Delete task &apos;Old Task&apos;&quot;</li>
                                     </ul>
                                 </div>
                             )}
@@ -87,10 +87,10 @@ export default function ChatWidget() {
                                 >
                                     <div
                                         className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow-sm ${msg.role === "user"
-                                                ? "bg-primary text-white rounded-tr-none"
-                                                : msg.role === "system"
-                                                    ? "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 italic" // System messages distinct
-                                                    : "bg-white dark:bg-[#2B2C37] text-gray-800 dark:text-white rounded-tl-none border border-gray-100 dark:border-gray-700"
+                                            ? "bg-primary text-white rounded-tr-none"
+                                            : msg.role === "system"
+                                                ? "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 italic" // System messages distinct
+                                                : "bg-white dark:bg-[#2B2C37] text-gray-800 dark:text-white rounded-tl-none border border-gray-100 dark:border-gray-700"
                                             } ${msg.type === "confirmation" ? "border-l-4 border-yellow-500" : ""}`}
                                     >
                                         <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>

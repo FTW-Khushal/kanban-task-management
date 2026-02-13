@@ -106,14 +106,14 @@ export function useChat({ boardId, columns }: UseChatProps) {
                 body: JSON.stringify({ user_request: text }),
             });
 
-            console.log(response);
+
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
                 throw new Error(errorData.message || "Failed to reach chat server");
             }
 
             const data: LlmResponse = await response.json();
-            console.log("Chat Server Response:", data);
+
 
             if (data.status === 'success') {
                 if (data.has_tool_calls && data.tool_calls) {
@@ -137,7 +137,7 @@ export function useChat({ boardId, columns }: UseChatProps) {
             }
 
         } catch (error: any) {
-            addMessage({ role: "system", content: `Error: ${error.message}. Is the NestJS backend running on port 3001?` });
+            addMessage({ role: "system", content: `Error: ${error.message}. Please check if the backend service is running.` });
         } finally {
             setIsLoading(false);
         }
