@@ -114,7 +114,7 @@ export const executeBridgeFunction = async (
 
                 const subtasks = args.subtasks ? JSON.parse(args.subtasks) : [];
 
-                await apiClient.post("/tasks", {
+                const newTask = await apiClient.post<Task>("/tasks", {
                     title: args.title,
                     description: args.description || "",
                     column_id: targetColumn.id, // Ensure this is number/string correctly. Types say string usually or number.
@@ -123,6 +123,12 @@ export const executeBridgeFunction = async (
                 });
 
                 await queryClient.invalidateQueries({ queryKey: ["board", context.boardId] });
+
+                // Wait for UI to settle before highlighting
+                setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent("task-highlight", { detail: { taskId: newTask.id } }));
+                }, 1000);
+
                 return { success: true, message: `Task '${args.title}' created in '${args.column_name}'.` };
 
             case "bridge_update_task":
@@ -154,8 +160,14 @@ export const executeBridgeFunction = async (
                     }
                 }
 
-                await apiClient.patch(`/tasks/${foundTask.id}`, taskUpdatePayload);
+                const updatedTask = await apiClient.patch<Task>(`/tasks/${foundTask.id}`, taskUpdatePayload);
                 await queryClient.invalidateQueries({ queryKey: ["board", context.boardId] });
+
+                // Wait for UI to settle before highlighting
+                setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent("task-highlight", { detail: { taskId: updatedTask.id } }));
+                }, 1000);
+
                 return { success: true, message: `Task '${args.current_task_title}' updated.` };
 
             case "bridge_delete_task":
@@ -198,6 +210,11 @@ export const executeBridgeFunction = async (
 
                 await apiClient.patch(`/subtasks/${subtask.id}`, { is_completed: isCompleted });
                 await queryClient.invalidateQueries({ queryKey: ["board", context.boardId] });
+
+                // Wait for UI to settle before highlighting
+                setTimeout(() => {
+                    window.dispatchEvent(new CustomEvent("task-highlight", { detail: { taskId: parentTask.id } }));
+                }, 1000);
 
                 return { success: true, message: `Subtask '${args.subtask_title}' marked as ${isCompleted ? 'completed' : 'incomplete'}.` };
 
