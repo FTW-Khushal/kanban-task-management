@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🏆 The Ultimate Kanban Experience (AI-Powered)
 
-## Getting Started
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](http://kanbanapp.net/)
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react)](https://react.dev/)
+[![Tailwind](https://img.shields.io/badge/Tailwind-4.0-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 
-First, run the development server:
+**Experience it Live: [kanbanapp.net](http://kanbanapp.net/)**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Welcome to a masterclass in modern web engineering. This isn't just another Kanban board; it's a high-performance, **AI-integrated workspace management system** engineered for speed, responsiveness, and a flawless user experience. Built with the bleeding-edge stack of **Next.js 15** and **React 19**, it sets a new standard for what a web application can be.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🚀 Why This Project Stands Out
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 🤖 Next-Gen AI Management Bridge
+Stop clicking, start commanding. This project features a sophisticated **Natural Language Processing (NLP)** bridge that translates complex human intent into precise system actions.
+- **Context-Aware Commands**: "Move my urgent marketing tasks to the 'High Priority' column."
+- **Automated Workflow Creation**: "Generate a new board for a 2-week Sprint with Todo, In Progress, Peer Review, and Done columns."
+- **Zero-Latency Feedback**: AI actions are immediately reflected on the UI with elegant visual highlights.
 
-## Learn More
+### 🎯 Enterprise-Grade Kanban Engine
+Built on top of a rock-solid Drag & Drop architecture, the Kanban engine handles complex state transitions with ease.
+- **Fluid Interactions**: Powered by `@hello-pangea/dnd` for butter-smooth movement.
+- **Optimistic Everything**: We don't wait for the server. Every action—moving tasks, toggling subtasks, renaming boards—is reflected instantly, ensuring a zero-lag user experience.
+- **Dynamic Workspaces**: Scale from a single Todo list to enterprise-level project tracking with unlimited boards and columns.
 
-To learn more about Next.js, take a look at the following resources:
+### 💎 Premium Glassmorphic Design
+Aesthetics meet functionality. The UI is a custom-crafted masterpiece featuring:
+- **Responsive Mastery**: A first-class experience on everything from a 4K monitor to a mobile device.
+- **Micro-Animations**: Subtle, purposeful animations powered by `Framer Motion` that make the app feel alive.
+- **Refined Dark/Light Themes**: Pixel-perfect color palettes designed for long-form focus and visual comfort.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ The Powerhouse Stack
 
-## Deploy on Vercel
+| Layer | Technology | Why it's here |
+| :--- | :--- | :--- |
+| **Framework** | [Next.js 15](https://nextjs.org/) | App Router for blazing-fast performance and SEO. |
+| **UI Library** | [React 19](https://react.dev/) | Utilizing the latest React features for efficient rendering. |
+| **Styling** | [Tailwind CSS 4.0](https://tailwindcss.com/) | The latest in utility-first design systems. |
+| **State** | [TanStack Query v5](https://tanstack.com/query) | Robust server-state management and sync. |
+| **Primitives** | [Radix UI](https://www.radix-ui.com/) | Unstyled, accessible components as a foundation. |
+| **Animation** | [Framer Motion](https://www.framer.com/motion/) | Cinematic transitions and interactions. |
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 🧠 Behind the Scenes: The AI Bridge
+
+The core innovation lies in `lib/chat-bridge.ts`. It's a robust mapping layer that connects an LLM (Large Language Model) to the application context. It's not just a chatbot; it's a **functional interface** that understands types, board IDs, and column relationships to perform surgery on your data in real-time.
+
+---
+
+## 🛠️ Local Development & Setup
+
+If you want to run this powerhouse locally:
+
+1. **Clone with Intent**:
+   ```bash
+   git clone https://github.com/FTW-Khushal/kanban-task-management.git
+   cd kanban-task-management
+   ```
+
+2. **Fuel the Dependencies**:
+   ```bash
+   npm install
+   ```
+
+3. **Configure the Engine**:
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:3001
+   ```
+
+4. **Ignite the Server**:
+   ```bash
+   npm run dev
+   ```
+
+---
+
+Built with passion and technical excellence by [Khushal](https://github.com/FTW-Khushal). Check it out live at **[kanbanapp.net](http://kanbanapp.net/)**.
